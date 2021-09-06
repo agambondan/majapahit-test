@@ -9,12 +9,27 @@ import (
 type Users []model.User
 
 func main() {
+	var userr = model.User{
+		Id:                 1,
+		Username:           "",
+		Password:           "johny",
+		Email:              "johny@gmail.com",
+		AlamatKTP:          "selangkangan",
+		Pekerjaan:          "customer service",
+		NamaLengkap:        "johny johny",
+		PendidikanTerakhir: "S3",
+		NomorTelepon:       "452319128321",
+	}
 	var users Users
 	user, user1 := model.InitUser()
 	fmt.Println(users.createUser(&users, user))
 	fmt.Println(users.createUser(&users, user1))
-	fmt.Println(users.getUserById(user.Id))
-	fmt.Println(users.deleteUserId(users, user.Id), "Get Users After Delete User By Id")
+	fmt.Println(users.createUser(&users, userr))
+	fmt.Println(users.getUserById(user1.Id))
+	//fmt.Println(users.updateUserById(users, userr, user.Id))
+	//fmt.Println()
+	fmt.Println(users.deleteUserId(users, user.Id))
+	//fmt.Println(users)
 	fmt.Println(users.login(user.Username, user.Email, user.Password))
 	fmt.Println(users.login(user1.Username, user1.Email, user1.Password))
 
@@ -63,9 +78,9 @@ func (u Users) getUserById(id int) (model.User, error) {
 }
 
 func (u Users) updateUserById(users Users, user model.User, id int) (model.User, error) {
-	_, err := u.getUserById(id)
+	userById, err := u.getUserById(id)
 	if err != nil {
-		return user, err
+		return userById, err
 	}
 	for i := 0; i < len(users); i++ {
 		if users[i].Id == id {
@@ -77,7 +92,11 @@ func (u Users) updateUserById(users Users, user model.User, id int) (model.User,
 	return user, nil
 }
 
-func (u Users) deleteUserId(users Users, id int) Users {
+func (u Users) deleteUserId(users Users, id int) (Users, error) {
+	_, err := u.getUserById(id)
+	if err != nil {
+		return users, err
+	}
 	for i := 0; i < len(u); i++ {
 		if u[i].Id == id {
 			copy(users[i:], users[i+1:])
@@ -86,7 +105,7 @@ func (u Users) deleteUserId(users Users, id int) Users {
 			//users = append(users[:i], users[i+1:])
 		}
 	}
-	return users
+	return users, nil
 }
 
 func (u Users) login(username, email, password string) string {
